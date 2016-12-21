@@ -1,5 +1,5 @@
 body {
-  background: black;
+  background: lightgreen;
   font-family: sans-serif;
 }
 
@@ -20,6 +20,18 @@ body {
 .clear-button:hover {
   cursor: pointer;
   background: lightblue;
+}
+
+.upload-button {
+  float: right;
+  background: red;
+  padding: 10px;
+  text-transform: uppercase;
+}
+
+.upload-button:hover {
+  cursor: pointer;
+  background: pink;
 }
 
 .main-column-left {

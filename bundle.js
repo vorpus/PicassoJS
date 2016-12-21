@@ -79,7 +79,19 @@
 	    debugger
 	  });
 	
-	  $('.clear-button').on("click", (e) => {
+	  $('.image-upload').on('change', (e) => {
+	    let reader = new FileReader();
+	    reader.onload = (e) => {
+	      let newImage = new Image();
+	      // newImage.onload = () => {
+	      //
+	      // }
+	      thisCanvas.replaceImage(e.target.result, ctx);
+	    }
+	    reader.readAsDataURL(e.target.files[0]);
+	  });
+	
+	  $('.clear-button').on("click", () => {
 	    thisCanvas.removeAllPoints();
 	    $('.main-column-slider')[0].value = 0;
 	    // for (let i = 0; i < 50; i++) {
@@ -133,6 +145,10 @@
 	    this.points = [];
 	  }
 	
+	  replaceImage(img, ctx) {
+	    this.image.src = img;
+	    this.renderImage(ctx);
+	  }
 	
 	
 	  getVoronoiPolys() {
@@ -148,7 +164,7 @@
 	    });
 	  }
 	
-	  readImage(ctx) {
+	  renderImage(ctx) {
 	      ctx.drawImage(this.image, 0, 0);
 	  }
 	
@@ -157,7 +173,7 @@
 	    ctx.fillStyle = Canvas.BG_COLOR;
 	    ctx.fillRect(0, 0, Canvas.DIM_X, Canvas.DIM_Y);
 	
-	    this.readImage(ctx);
+	    this.renderImage(ctx);
 	
 	    let vorPolys = this.getVoronoiPolys();
 	    this.printPolys(vorPolys, ctx);
