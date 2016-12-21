@@ -30,7 +30,9 @@ The app will use the following technologies:
 
 My implementation will rely on two main files:
 1. points.js - handles the logic of adding and removing points
+
 2. voronoi.js - middleman between d3-voronoi and points.js to generate the Voronoi cells
+
 3. colors.js - Uses voronoi cells to find the average color within each polygon
 
 
