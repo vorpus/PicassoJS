@@ -15,28 +15,78 @@
   </head>
   <body>
     <div class="main-column">
-      <div class="title">
-        PicassoJS
-      </div>
-      <div class="main-column-top">
-        <input class="image-upload" type="file" name="" value="Upload image" />
+      <div class="heading group">
+        <div class="title">
+          PicassoJS
+        </div>
+        <div class="subtitle">
+          Interactive voronoi mosaic generator!
+        </div>
 
+        <div class="heading-right group">
+          <div class="heading-right-item">
+            <a href="http://lizha.ng/">Website</a>
+          </div>
+          <div class="heading-right-item">
+            <a href="https://github.com/vorpus/PicassoJS">Github</a>
+          </div>
+          <div class="heading-right-item">
+            <a href="https://www.linkedin.com/in/zhangio">Linkedin</a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="main-column-top group">
+        <label for="upload">
+          <input id="upload" class="image-upload" type="file" name="" value="Upload image" />
+          <div class="choose-upload">
+            Upload Image!
+          </div>
+        </label>
         <div class="choose-image">
           <ul>
             <li class="choose-1" data='pictures/600.jpg'></li>
             <li class="choose-2" data='pictures/nyancat.jpg'></li>
             <li class="choose-3" data='pictures/eye.jpg'></li>
-            <li class="choose-4"></li>
-            <li class="choose-5"></li>
+            <li class="choose-4" data='pictures/happy.jpg'></li>
+            <li class="choose-5" data='pictures/westbrook.jpg'></li>
+            <li class="choose-6" data='pictures/marina.jpg'></li>
           </ul>
         </div>
       </div>
       <canvas id="canvas"></canvas>
-      <div class="main-column-left">
-        <input class="main-column-slider" type="range" name="" value="0" min="0" max="1000" />
+
+      <div class="below-canvas">
+        <div class="main-column-left group">
+          Generate <strong id="how-many">0</strong> voronoi cells:
+          <br />
+          <input class="main-column-slider" type="range" name="" value="0" min="0" max="1000" />
+
+          <div class="description-text">
+            <div class="title">
+              What's going on here?
+            </div>
+            A Voronoi Tesselation is a figure in which cells are created around a number of seed points
+            such that all points within the cell are closest to its seed point. Find more on my
+            <a href="https://github.com/vorpus/PicassoJS">Github (readme)</a>!
+          </div>
+        </div>
+
+
+
+        <div class="toggles">
+          <div class="clear-button toggle-btn">Reset</div>
+          <div class="toggle-points toggle-btn">Toggle Points</div>
+          <div class="toggle-borders toggle-btn">Toggle Borders</div>
+          <div class="toggle-mode">
+            <div class="toggle-mode-display toggle-btn current-show">Render: Quick</div>
+            <div class="toggle-mode-display toggle-btn">Render: Accurate</div>
+          </div>
+        </div>
       </div>
-      <div class="clear-button">Clear</div>
-      <div class="toggle-points">Toggle Points</div>
+
+
     </div>
   </body>
 </html>

@@ -45,7 +45,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Canvas = __webpack_require__(2);
-	const Point = __webpack_require__(3);
 	const d3 = __webpack_require__(4)
 	const jQuery = __webpack_require__(5);
 	
@@ -76,28 +75,24 @@
 	    thisCanvas.addPoint([mousePos.x, mousePos.y]);
 	    $('.main-column-slider')[0].value = parseInt($('.main-column-slider')[0].value) + 1;
 	    thisCanvas.draw(ctx);
-	    // debugger
-	    // ctx.getImageData(0,0,1,1)
+	
 	  });
 	
 	  $('.image-upload').on('change', (e) => {
 	    let reader = new FileReader();
 	    reader.onload = (e) => {
+	
+	      resetSlider();
 	      let newImage = new Image();
-	      // newImage.onload = () => {
-	      //
-	      // }
+	
 	      thisCanvas.replaceImage(e.target.result, ctx);
 	    }
 	    reader.readAsDataURL(e.target.files[0]);
 	  });
 	
 	  $('.clear-button').on("click", () => {
-	    thisCanvas.removeAllPoints();
-	    $('.main-column-slider')[0].value = 0;
-	    // for (let i = 0; i < 50; i++) {
-	    //   thisCanvas.addPoint([Math.floor(Math.random()*Canvas.DIM_X), Math.floor(Math.random()*Canvas.DIM_Y)]);
-	    // }
+	    resetSlider();
+	
 	    thisCanvas.draw(ctx);
 	  });
 	
@@ -108,19 +103,38 @@
 	    while (e.target.value < thisCanvas.checkPoints().length) {
 	      thisCanvas.popPoint();
 	    }
-	      thisCanvas.draw(ctx);
+	    thisCanvas.draw(ctx);
+	    $('#how-many').text(e.target.value);
 	  });
 	
 	  $('.toggle-points').on("click", () => {
-	    // debugger
-	    thisCanvas.bugger(ctx);
+	    thisCanvas.togglePoints();
+	    thisCanvas.draw(ctx);
 	  });
 	
-	  $('.choose-image').on("click", (e) => {
-	    thisCanvas.removeAllPoints();
-	    $('.main-column-slider')[0].value = 0;
+	  $('.toggle-borders').on("click", () => {
+	    thisCanvas.toggleBorders();
+	    thisCanvas.draw(ctx);
+	  });
+	
+	  $('.toggle-mode').on("click", () => {
+	    thisCanvas.toggleAccurate();
+	    thisCanvas.draw(ctx);
+	    $('.toggle-mode-display').toggleClass('current-show');
+	  });
+	
+	  $('li').on("click", (e) => {
+	    resetSlider();
 	    thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
 	  });
+	
+	  function resetSlider() {
+	    thisCanvas.removeAllPoints();
+	    $('.main-column-slider')[0].value = 0;
+	    $('#how-many').text('0');
+	  }
+	
+	  // thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 	});
 
 
@@ -139,11 +153,21 @@
 	    this.image = new Image();
 	    this.colorMap = {};
 	
-	
-	    this.showAccurate = true;
+	    this.showAccurate = false;
 	    this.showBorders = false;
 	    this.showPoints = false;
+	  }
 	
+	  togglePoints() {
+	    this.showPoints = !this.showPoints;
+	  }
+	
+	  toggleBorders() {
+	    this.showBorders = !this.showBorders;
+	  }
+	
+	  toggleAccurate() {
+	    this.showAccurate = !this.showAccurate;
 	  }
 	
 	  bugger(ctx) {
@@ -190,19 +214,10 @@
 	    let alpha = [];
 	
 	    const colorMap = ctx.getImageData(0, 0, Canvas.DIM_X, Canvas.DIM_Y);
+	
+	    let colorfuls = [reds, greens, blues, alpha];
 	    for (let i = 0; i < colorMap.data.length; i++) {
-	      if (i % 4 === 0) {
-	        reds.push(colorMap.data[i]);
-	      }
-	      if ((i - 1) % 4 === 0) {
-	        greens.push(colorMap.data[i]);
-	      }
-	      if ((i - 2) % 4 === 0) {
-	        blues.push(colorMap.data[i]);
-	      }
-	      if ((i - 3) % 4 === 0) {
-	        alpha.push(colorMap.data[i]);
-	      }
+	      colorfuls[i%4].push(colorMap.data[i]);
 	    }
 	
 	    let reds2d = [];
@@ -265,8 +280,14 @@
 	
 	  quickColors(polygon, ctx) {
 	    let bounds = this.squareBounds(polygon);
+	    let yCenter = Math.round((bounds.ymin + bounds.ymax)/2);
+	    let xCenter = Math.round((bounds.xmin + bounds.xmax)/2);
 	
-	    let quickReds = this.colorMap.reds[(bounds.xmin + bounds.xmax)/2]
+	    let quickReds = this.colorMap.reds[yCenter][xCenter];
+	    let quickGreens = this.colorMap.greens[yCenter][xCenter];
+	    let quickBlues = this.colorMap.blues[yCenter][xCenter];
+	
+	    return d3.rgb(quickReds, quickGreens, quickBlues);
 	  }
 	
 	  colorsBoundedByPolygon(polygon, bounds, polyColors) {
@@ -320,12 +341,18 @@
 	    polygon.forEach((vertex) => {
 	      if (vertex[0] < polyMinX) {
 	        polyMinX = vertex[0];
+	        if (polyMinX < 0) {
+	          polyMinX = 0;
+	        }
 	      }
 	      if (vertex[0] > polyMaxX) {
 	        polyMaxX = vertex[0];
 	      }
 	      if (vertex[1] < polyMinY) {
 	        polyMinY = vertex[1];
+	        if (polyMinY < 0) {
+	          polyMinY = 0;
+	        }
 	      }
 	      if (vertex[1] > polyMaxY) {
 	        polyMaxY = vertex[1];
@@ -387,20 +414,7 @@
 
 
 /***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	class Point {
-	  constructor(coords) {
-	    this.x = coords.x;
-	    this.y = coords.y;
-	  }
-	}
-	
-	module.exports = Point;
-
-
-/***/ },
+/* 3 */,
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
