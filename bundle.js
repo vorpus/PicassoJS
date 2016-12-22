@@ -117,8 +117,7 @@
 	  });
 	
 	  $('.choose-image').on("click", () => {
-	
-	    thisCanvas.replaceImage('https://s3.amazonaws.com/picasso-images/600.jpg', ctx);
+	    thisCanvas.replaceImage('pictures/600.jpg', ctx);
 	  });
 	});
 
@@ -137,6 +136,9 @@
 	                      .size([Canvas.DIM_X, Canvas.DIM_Y]);
 	    this.image = new Image();
 	    this.colorMap = {};
+	
+	    this.showBorders = false;
+	    this.showPoints = false;
 	
 	    // this.image.src = 'https://s3.amazonaws.com/picasso-images/600.jpg';
 	    // this.voronoi.extent([[0,0], [1000, 1000]]);
@@ -165,6 +167,8 @@
 	  }
 	
 	  replaceImage(img, ctx) {
+	    this.clearCanvas(ctx);
+	
 	    const newImage = new Image();
 	    newImage.src = img;
 	
@@ -232,7 +236,10 @@
 	      ctx.fillStyle = fillColor;
 	
 	      polygon.forEach((vertex) => ctx.lineTo(...vertex));
-	      ctx.stroke();
+	
+	      if (this.showBorders) {
+	        ctx.stroke();
+	      }
 	      ctx.fill();
 	    });
 	  }
@@ -325,7 +332,23 @@
 	      ctx.drawImage(this.image, 0, 0);
 	  }
 	
+	  renderPoints(ctx) {
+	    this.points.forEach((point) => {
+	      ctx.beginPath();
+	      ctx.arc(point[0], point[1], 2, 0, 2*Math.PI, false);
+	      ctx.fillStyle = 'green';
+	      ctx.closePath();
+	      ctx.fill();
+	    });
+	  }
+	
+	  clearCanvas(ctx) {
+	    ctx.fillStyle = Canvas.BG_COLOR;
+	    ctx.fillRect(0, 0, Canvas.DIM_X, Canvas.DIM_Y);
+	  }
+	
 	  draw(ctx) {
+	    this.clearCanvas(ctx);
 	
 	    ctx.fillStyle = Canvas.BG_COLOR;
 	    ctx.fillRect(0, 0, Canvas.DIM_X, Canvas.DIM_Y);
@@ -335,15 +358,9 @@
 	    let vorPolys = this.getVoronoiPolys();
 	    this.printPolys(vorPolys, ctx);
 	
-	
-	
-	    this.points.forEach((point) => {
-	      ctx.beginPath();
-	      ctx.arc(point[0], point[1], 2, 0, 2*Math.PI, false);
-	      ctx.fillStyle = 'green';
-	      ctx.closePath();
-	      ctx.fill();
-	    });
+	    if (this.showPoints) {
+	      this.renderPoints(ctx);
+	    }
 	  }
 	}
 	
