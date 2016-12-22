@@ -46,7 +46,7 @@
 
 	const Canvas = __webpack_require__(2);
 	const Point = __webpack_require__(3);
-	const voronoi = __webpack_require__(4)
+	const d3 = __webpack_require__(4)
 	const jQuery = __webpack_require__(5);
 	
 	document.addEventListener("DOMContentLoaded", () => {
@@ -76,7 +76,8 @@
 	    thisCanvas.addPoint([mousePos.x, mousePos.y]);
 	    $('.main-column-slider')[0].value = parseInt($('.main-column-slider')[0].value) + 1;
 	    thisCanvas.draw(ctx);
-	    debugger
+	    // debugger
+	    // ctx.getImageData(0,0,1,1)
 	  });
 	
 	  $('.image-upload').on('change', (e) => {
@@ -109,24 +110,42 @@
 	    }
 	      thisCanvas.draw(ctx);
 	  });
+	
+	  $('.toggle-points').on("click", () => {
+	    // debugger
+	    thisCanvas.bugger(ctx);
+	  });
+	
+	  $('.choose-image').on("click", () => {
+	
+	    thisCanvas.replaceImage('https://s3.amazonaws.com/picasso-images/600.jpg', ctx);
+	  });
 	});
 
 
 /***/ },
 /* 1 */,
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	const d3poly = __webpack_require__(7)
+	
 	class Canvas {
-	  constructor() {
+	  constructor(ctx) {
 	    this.points = [];
 	    this.voronoi = d3.geom.voronoi()
 	                      .size([Canvas.DIM_X, Canvas.DIM_Y]);
 	    this.image = new Image();
+	    this.colorMap = {};
 	
-	    this.image.src = './pictures/600.jpg';
-	    this.image.crossOrigin = 'Anonymous';
+	    // this.image.src = 'https://s3.amazonaws.com/picasso-images/600.jpg';
 	    // this.voronoi.extent([[0,0], [1000, 1000]]);
+	
+	  }
+	
+	  bugger(ctx) {
+	    // debugger
+	    console.log(this.colorMap);
 	  }
 	
 	  addPoint(point) {
@@ -146,8 +165,56 @@
 	  }
 	
 	  replaceImage(img, ctx) {
-	    this.image.src = img;
-	    this.renderImage(ctx);
+	    const newImage = new Image();
+	    newImage.src = img;
+	
+	    newImage.onload = (e) => {
+	      this.image = newImage;
+	      this.renderImage(ctx);
+	      this.calculateColorMap(ctx);
+	    }
+	
+	
+	  }
+	
+	  calculateColorMap(ctx) {
+	    console.log('getting image data');
+	    let reds = [];
+	    let greens = [];
+	    let blues = [];
+	    let alpha = [];
+	
+	    const colorMap = ctx.getImageData(0, 0, Canvas.DIM_X, Canvas.DIM_Y);
+	    for (let i = 0; i < colorMap.data.length; i++) {
+	      if (i % 4 === 0) {
+	        reds.push(colorMap.data[i]);
+	      }
+	      if ((i - 1) % 4 === 0) {
+	        greens.push(colorMap.data[i]);
+	      }
+	      if ((i - 2) % 4 === 0) {
+	        blues.push(colorMap.data[i]);
+	      }
+	      if ((i - 3) % 4 === 0) {
+	        alpha.push(colorMap.data[i]);
+	      }
+	    }
+	
+	    let reds2d = [];
+	    let greens2d = [];
+	    let blues2d = [];
+	
+	    for (let j = 0; j < Canvas.DIM_Y; j++) {
+	      reds2d.push(reds.splice(0, Canvas.DIM_X));
+	      greens2d.push(greens.splice(0, Canvas.DIM_X));
+	      blues2d.push(blues.splice(0, Canvas.DIM_X));
+	    }
+	
+	    this.colorMap = {
+	      reds: reds2d,
+	      greens: greens2d,
+	      blues: blues2d
+	    }
 	  }
 	
 	
@@ -157,11 +224,101 @@
 	  }
 	
 	  printPolys(polys, ctx) {
-	    polys.forEach((polygon) => {
+	    polys.forEach((polygon, idx) => {
 	      ctx.beginPath();
+	
+	      let fillColor = this.averageColors(polygon, ctx);
+	      // console.log(fillColor);
+	      ctx.fillStyle = fillColor;
+	
 	      polygon.forEach((vertex) => ctx.lineTo(...vertex));
 	      ctx.stroke();
+	      ctx.fill();
 	    });
+	  }
+	
+	  averageColors(polygon, ctx) {
+	    let bounds = this.squareBounds(polygon);
+	
+	    let smallReds; let smallGreens; let smallBlues;
+	    [smallReds, smallGreens, smallBlues] = this.submatrix(bounds);
+	
+	    let polyReds = this.sumColorsBoundedByPolygon(polygon, bounds, smallReds);
+	    let polyGreens = this.sumColorsBoundedByPolygon(polygon, bounds, smallGreens);
+	    let polyBlues = this.sumColorsBoundedByPolygon(polygon, bounds, smallBlues);
+	
+	    return d3.rgb(polyReds, polyGreens, polyBlues);
+	  }
+	
+	  colorsBoundedByPolygon(polygon, bounds, polyColors) {
+	    const boundedColors = [];
+	    polyColors.forEach((colorRow, rowIdxY) => {
+	      colorRow.forEach((colorEl, elIdxX) => {
+	        if (d3poly.polygonContains(polygon, [bounds.xmin + elIdxX, bounds.ymin + rowIdxY])) {
+	          boundedColors.push(colorEl);
+	        }
+	      });
+	    });
+	    return boundedColors;
+	  }
+	
+	  sumColorsBoundedByPolygon(polygon, bounds, polyColors) {
+	    let boundedColorsSum = 0;
+	    let boundedCount = 0;
+	    polyColors.forEach((colorRow, rowIdxY) => {
+	      colorRow.forEach((colorEl, elIdxX) => {
+	        if (d3poly.polygonContains(polygon, [bounds.xmin + elIdxX, bounds.ymin + rowIdxY])) {
+	          boundedColorsSum += colorEl;
+	          boundedCount++;
+	        }
+	      });
+	    });
+	    return Math.floor(boundedColorsSum/boundedCount);
+	  }
+	
+	  submatrix(bounds) {
+	    let relevantRedRows = this.colorMap.reds.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
+	    let relevantReds = relevantRedRows.map((row) => {
+	      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
+	    });
+	    let relevantGreenRows = this.colorMap.greens.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
+	    let relevantGreens = relevantGreenRows.map((row) => {
+	      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
+	    });
+	    let relevantBlueRows = this.colorMap.blues.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
+	    let relevantBlues = relevantBlueRows.map((row) => {
+	      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
+	    });
+	    return [relevantReds,relevantGreens,relevantBlues];
+	  }
+	
+	  squareBounds(polygon) {
+	    let polyMinX = Canvas.DIM_X;
+	    let polyMinY = Canvas.DIM_Y;
+	    let polyMaxX = 0;
+	    let polyMaxY = 0;
+	
+	    polygon.forEach((vertex) => {
+	      if (vertex[0] < polyMinX) {
+	        polyMinX = vertex[0];
+	      }
+	      if (vertex[0] > polyMaxX) {
+	        polyMaxX = vertex[0];
+	      }
+	      if (vertex[1] < polyMinY) {
+	        polyMinY = vertex[1];
+	      }
+	      if (vertex[1] > polyMaxY) {
+	        polyMaxY = vertex[1];
+	      }
+	    });
+	
+	    return({
+	      xmin: polyMinX,
+	      xmax: polyMaxX,
+	      ymin: polyMinY,
+	      ymax: polyMaxY
+	    })
 	  }
 	
 	  renderImage(ctx) {
@@ -228,6 +385,14 @@
 /***/ function(module, exports) {
 
 	module.exports = jQuery;
+
+/***/ },
+/* 6 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// https://d3js.org/d3-polygon/ Version 1.0.2. Copyright 2016 Mike Bostock.
+	!function(n,r){ true?r(exports):"function"==typeof define&&define.amd?define(["exports"],r):r(n.d3=n.d3||{})}(this,function(n){"use strict";function r(n,r){return n[0]-r[0]||n[1]-r[1]}function e(n){for(var r=n.length,e=[0,1],t=2,o=2;o<r;++o){for(;t>1&&f(n[e[t-2]],n[e[t-1]],n[o])<=0;)--t;e[t++]=o}return e.slice(0,t)}var t=function(n){for(var r,e=-1,t=n.length,o=n[t-1],f=0;++e<t;)r=o,o=n[e],f+=r[1]*o[0]-r[0]*o[1];return f/2},o=function(n){for(var r,e,t=-1,o=n.length,f=0,u=0,l=n[o-1],i=0;++t<o;)r=l,l=n[t],i+=e=r[0]*l[1]-l[0]*r[1],f+=(r[0]+l[0])*e,u+=(r[1]+l[1])*e;return i*=3,[f/i,u/i]},f=function(n,r,e){return(r[0]-n[0])*(e[1]-n[1])-(r[1]-n[1])*(e[0]-n[0])},u=function(n){if((o=n.length)<3)return null;var t,o,f=new Array(o),u=new Array(o);for(t=0;t<o;++t)f[t]=[+n[t][0],+n[t][1],t];for(f.sort(r),t=0;t<o;++t)u[t]=[f[t][0],-f[t][1]];var l=e(f),i=e(u),g=i[0]===l[0],a=i[i.length-1]===l[l.length-1],c=[];for(t=l.length-1;t>=0;--t)c.push(n[f[l[t]][2]]);for(t=+g;t<i.length-a;++t)c.push(n[f[i[t]][2]]);return c},l=function(n,r){for(var e,t,o=n.length,f=n[o-1],u=r[0],l=r[1],i=f[0],g=f[1],a=!1,c=0;c<o;++c)f=n[c],e=f[0],t=f[1],t>l!=g>l&&u<(i-e)*(l-t)/(g-t)+e&&(a=!a),i=e,g=t;return a},i=function(n){for(var r,e,t=-1,o=n.length,f=n[o-1],u=f[0],l=f[1],i=0;++t<o;)r=u,e=l,f=n[t],u=f[0],l=f[1],r-=u,e-=l,i+=Math.sqrt(r*r+e*e);return i};n.polygonArea=t,n.polygonCentroid=o,n.polygonHull=u,n.polygonContains=l,n.polygonLength=i,Object.defineProperty(n,"__esModule",{value:!0})});
 
 /***/ }
 /******/ ]);
