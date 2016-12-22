@@ -116,8 +116,10 @@
 	    thisCanvas.bugger(ctx);
 	  });
 	
-	  $('.choose-image').on("click", () => {
-	    thisCanvas.replaceImage('pictures/600.jpg', ctx);
+	  $('.choose-image').on("click", (e) => {
+	    thisCanvas.removeAllPoints();
+	    $('.main-column-slider')[0].value = 0;
+	    thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
 	  });
 	});
 
@@ -137,11 +139,10 @@
 	    this.image = new Image();
 	    this.colorMap = {};
 	
+	
+	    this.showAccurate = true;
 	    this.showBorders = false;
 	    this.showPoints = false;
-	
-	    // this.image.src = 'https://s3.amazonaws.com/picasso-images/600.jpg';
-	    // this.voronoi.extent([[0,0], [1000, 1000]]);
 	
 	  }
 	
@@ -231,8 +232,13 @@
 	    polys.forEach((polygon, idx) => {
 	      ctx.beginPath();
 	
-	      let fillColor = this.averageColors(polygon, ctx);
-	      // console.log(fillColor);
+	      let fillColor;
+	      if (this.showAccurate) {
+	        fillColor = this.averageColors(polygon, ctx);
+	      } else {
+	        fillColor = this.quickColors(polygon, ctx);
+	      }
+	
 	      ctx.fillStyle = fillColor;
 	
 	      polygon.forEach((vertex) => ctx.lineTo(...vertex));
@@ -255,6 +261,12 @@
 	    let polyBlues = this.sumColorsBoundedByPolygon(polygon, bounds, smallBlues);
 	
 	    return d3.rgb(polyReds, polyGreens, polyBlues);
+	  }
+	
+	  quickColors(polygon, ctx) {
+	    let bounds = this.squareBounds(polygon);
+	
+	    let quickReds = this.colorMap.reds[(bounds.xmin + bounds.xmax)/2]
 	  }
 	
 	  colorsBoundedByPolygon(polygon, bounds, polyColors) {
@@ -329,7 +341,8 @@
 	  }
 	
 	  renderImage(ctx) {
-	      ctx.drawImage(this.image, 0, 0);
+	      ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height,
+	                                0, 0, Canvas.DIM_X, Canvas.DIM_Y);
 	  }
 	
 	  renderPoints(ctx) {

@@ -22,16 +22,9 @@ body {
   background: lightblue;
 }
 
-.upload-button {
-  float: right;
-  background: red;
-  padding: 10px;
-  text-transform: uppercase;
-}
-
-.upload-button:hover {
-  cursor: pointer;
-  background: pink;
+.image-upload {
+  margin-top: 30px;
+  float: left;
 }
 
 .main-column-left {
@@ -41,4 +34,30 @@ body {
 .main-column-slider {
   width: 400px;
   margin-top: 30px;
+}
+
+.choose-image {
+  float: right;
+}
+
+.choose-image li {
+  float: left;
+  width: 100px;
+  height: 100px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.choose-1 {
+  background-image: url('../pictures/600.jpg');
+}
+
+.choose-2 {
+  background-image: url('../pictures/nyancat.jpg');
+}
+
+.choose-3 {
+  background-image: url('../pictures/eye.jpg');
 }
