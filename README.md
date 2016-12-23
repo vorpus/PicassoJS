@@ -1,52 +1,73 @@
-## Picasso JS
+# Picasso JS
 
-### Background
+[Live](http://vorpus.github.io/PicassoJS/)
+
+## Background
 
 A [Voronoi Diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) is a figure in which cells are created around a number of seed points such that all points within the cell are closest to its seed point.
 
-PicassoJS will allow the user to add seed points to a Voronoi Diagram to create a picasso-esque version of their photographs.
+PicassoJS allows users to manually or randomly add cells to a Voronoi Diagram to create a picasso-esque version of their photographs.
+
+![voronoi](./wireframe/demo.gif)
+
+## How it works
+
+### Performance
+Because Canvas' `getImageData()` method only extracts RGBA data for rectangles with sides parallel to the X and Y axis, collecting pixel colors for each voronoi cell is inefficient. The solution is to store image data when the photo is initially loaded and querying the cached RGBA data when rendering each cell.
 
 
-### MVP
-In PicassoJS, users will be able to...
+```javascript
+replaceImage(img, ctx) {
+  this.clearCanvas(ctx);
+  const newImage = new Image();
+  newImage.src = img;
 
-- [ ] Click to add new seed points
-- [ ] Randomly generate seed points for the voronoi diagram
-- [ ] Drag a slider to increase the number of random seed points (making a clearer picture)
-- [ ] Select among predefined voronoi pattern demos
+  newImage.onload = (e) => {
+    this.image = newImage;
+    this.renderImage(ctx);
+    this.calculateColorMap(ctx);
+  }
+}
+```
 
-### Wireframe
+Using 'Accurate' rendering settings, each voronoi cell's fill color is calculated by taking the average color of each pixel contained within the polygon. This essentially iterates through every pixel in the 700px x 600px canvas (over 420,000 calculations), leading to less-than-ideal runtimes.
 
-PicassoJS will consist of a single canvas element surrounded by controls. Controls will include elements to 'upload a photo', 'choose a stock photo', 'clear seed points', and a 'randomly place points' slider.
+```javascript
+//this is repeated for R, G, and B values to find the average color within the cell
+sumColorsBoundedByPolygon(polygon, bounds, polyColors) {
+  let boundedColorsSum = 0;
+  let boundedCount = 0;
+  polyColors.forEach((colorRow, rowIdxY) => {
+    colorRow.forEach((colorEl, elIdxX) => {
+      if (d3poly.polygonContains(polygon, [bounds.xmin + elIdxX, bounds.ymin + rowIdxY])) {
+        boundedColorsSum += colorEl;
+        boundedCount++;
+      }
+    });
+  });
+  return Math.floor(boundedColorsSum/boundedCount);
+}
+```
 
-![Wireframe](/wireframe/wireframe.png)
+Using 'Quick' rendering settings, the cell's fill color is determined by the single pixel at the center of each Voronoi. This is extremely fast, with only (n = voronoi cell count) calculations. Performance can be compared on the live demo.
 
-### Architecture and Technologies
+```javascript
+quickColors(polygon, ctx) {
+  let bounds = this.squareBounds(polygon);
+  let yCenter = Math.round((bounds.ymin + bounds.ymax)/2);
+  let xCenter = Math.round((bounds.xmin + bounds.xmax)/2);
 
-The app will use the following technologies:
-* **HTML5 & CSS3** - to style everything outside the canvas
-* **JavaScript, jQuery** - to implement button actions
-* **D3.js** - for its Voronoi Diagram implementation
+  let quickReds = this.colorMap.reds[yCenter][xCenter];
+  // ... greens and blues are also calculated here...
 
-My implementation will rely on two main files:
-1. points.js - handles the logic of adding and removing points
+  return d3.rgb(quickReds, quickGreens, quickBlues);
+}
+```
 
-2. voronoi.js - middleman between d3-voronoi and points.js to generate the Voronoi cells
+## Tech
 
-3. colors.js - Uses voronoi cells to find the average color within each polygon
+* jQuery - takes care of the user interface and interactions
 
+* HTML5 Canvas - used for drawing lines, shading polygons. `Image` library is used to place images on the canvas and extract meaningful color data
 
-### Implementation Timeline
-**Day 1:** Implement Canvas where user can click to place a point or drag a slider to create random points. Ensure that all points are being stored in an array for future use.
-
-**Day 2:** Learn D3.js, learn how to use D3 outputs as inputs to HTML5 Canvas. By end of the day be able to generate Voronoi Diagrams.
-
-**Day 3:** Photos - Allow the user to upload pictures or choose from defaults. Get average color of photo within each polygon and fill entire Voronoi cell with said color.
-
-**Day 4+:** Polish HTML and CSS, add to portfolio.
-
-### Bonus Features
-In the future, I hope to...
-- [ ] Allow the user to drag points around and dynamically display the resulting picture
-- [ ] Add random movement to points and animate the resulting picture
-- [ ] Allow the user to toggle to view the Delaunay Triangulation of image as well
+* **[D3.js](https://d3js.org/)** - data manipulation library to perform Voronoi cell calculations

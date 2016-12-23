@@ -134,7 +134,7 @@
 	    $('#how-many').text('0');
 	  }
 	
-	  // thisCanvas.replaceImage('pictures/marina.jpg', ctx);
+	  thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 	});
 
 
@@ -193,7 +193,6 @@
 	
 	  replaceImage(img, ctx) {
 	    this.clearCanvas(ctx);
-	
 	    const newImage = new Image();
 	    newImage.src = img;
 	
@@ -202,8 +201,6 @@
 	      this.renderImage(ctx);
 	      this.calculateColorMap(ctx);
 	    }
-	
-	
 	  }
 	
 	  calculateColorMap(ctx) {
