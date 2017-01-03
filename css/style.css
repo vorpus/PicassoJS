@@ -1,5 +1,6 @@
 body {
   background: #100000;
+  background: linear-gradient(to bottom, rgba(30,2,10,1) 0%, rgba(0,0,1,1) 100%);
   font-family: sans-serif;
   color: white;
   font-size: 14px;
@@ -12,6 +13,12 @@ a {
 
 .heading {
   position: relative;
+  opacity: 0.4;
+  transition: 0.5s ease-in-out;
+}
+
+.heading:hover {
+  opacity: 1;
 }
 
 .heading-right {
@@ -37,13 +44,19 @@ a {
 
 .main-column {
   display: block;
-  width: 700px;
+  width: 950px;
   margin: 0 auto;
   padding: 0;
 }
 
 .below-canvas {
   margin-top: 10px;
+  opacity: 0.2;
+  transition: 0.5s ease-in-out;
+}
+
+.below-canvas:hover {
+  opacity: 1;
 }
 
 .toggles {
@@ -84,18 +97,22 @@ a {
 }
 
 .main-column-slider {
-  width: 380px;
+  width: 580px;
   margin: 10px 0 10px 0;
 }
 
 .description-text {
-  width: 350px;
+  width: 580px;
   line-height: 16px;
 }
 
 .description-text .title {
   font-size: 18px;
   margin-bottom: 5px;
+}
+
+.description-list {
+  margin: 10px 0;
 }
 
 .main-column-top {
@@ -107,7 +124,7 @@ a {
 }
 
 .choose-upload {
-  background: blue;
+  background: black;
   text-transform: uppercase;
   box-sizing: border-box;
   padding-top: 30px;
@@ -127,7 +144,13 @@ a {
   background-repeat: no-repeat;
   background-position: center center;
   margin: 0 5px;
+  filter: grayscale(80%);
 }
+
+.choose-upload {
+  filter: grayscale(0%);
+}
+
 
 .choose-image li:hover,
 .choose-upload:hover {

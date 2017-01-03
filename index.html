@@ -57,19 +57,28 @@
       </div>
       <canvas id="canvas"></canvas>
 
-      <div class="below-canvas">
+      <div class="below-canvas group">
         <div class="main-column-left group">
           Generate <strong id="how-many">0</strong> voronoi cells:
           <br />
-          <input class="main-column-slider" type="range" name="" value="0" min="0" max="1000" />
+          <input class="main-column-slider" type="range" name="" value="0" min="0" max="2000" />
 
           <div class="description-text">
             <div class="title">
               What's going on here?
             </div>
-            A Voronoi Tesselation is a figure in which cells are created around a number of seed points
-            such that all points within the cell are closest to its seed point. Find more on my
-            <a href="https://github.com/vorpus/PicassoJS">Github (readme)</a>!
+            A Voronoi Tesselation is a figure in which cells are created around a number of <b>seed points</b>.
+            All points within the cell are closest to its seed point than any other point on the diagram.
+            <br><br>
+            This algorithm is extremely useful in mapping geographical distances, describing cell structures, and
+            of course, generating art!
+            <ul class="description-list">
+              <li><b>Reset</b> reverts the image to its default state with 0 points</li>
+              <li><b>Toggle Points</b> shows and hides the seed points on the image</li>
+              <li><b>Toggle borders</b> shows and hides the borders of cells</li>
+              <li><b>Render Mode</b> switches between a simple and complex coloring algorithm</li>
+            </ul>
+            <br>Find more on my <a href="https://github.com/vorpus/PicassoJS">Github (readme)</a>!
           </div>
         </div>
 
@@ -81,7 +90,7 @@
           <div class="toggle-borders toggle-btn">Toggle Borders</div>
           <div class="toggle-mode">
             <div class="toggle-mode-display toggle-btn current-show">Render: Quick</div>
-            <div class="toggle-mode-display toggle-btn">Render: Accurate</div>
+            <div class="toggle-mode-display toggle-btn">Render: Accurate (SLOW)</div>
           </div>
         </div>
       </div>
