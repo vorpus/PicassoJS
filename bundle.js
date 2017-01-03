@@ -186,7 +186,7 @@
 	  // document.addEventListener('mozfullscreenchange', on_fullscreen_change);
 	  // document.addEventListener('webkitfullscreenchange', on_fullscreen_change);
 	
-	  // thisCanvas.replaceImage('pictures/marina.jpg', ctx);
+	  thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 	});
 
 
