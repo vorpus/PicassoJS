@@ -78,8 +78,17 @@
 	  //
 	  // });
 	
+	
+	  $('.heading, .below-canvas').mouseover(() => {
+	    $('.heading').removeClass('fadeout');
+	    $('.below-canvas').removeClass('fadeout');
+	  });
+	
+	
 	  $('canvas').on("mousedown", (e) => {
-	    console.log('start listen');
+	    $('.heading').addClass('fadeout');
+	    $('.below-canvas').addClass('fadeout');
+	
 	
 	    let mousePos = getMousePos(canvas, e);
 	    clicked(mousePos);
@@ -92,10 +101,10 @@
 	    }, 100);
 	
 	    $('canvas').on("mouseup", (e) => {
-	      console.log('unclick');
 	      window.clearInterval(drag);
 	      $('canvas').off("mouseup");
 	    });
+	
 	  });
 	
 	  function clicked(mousePos) {
@@ -152,6 +161,16 @@
 	    $('.toggle-mode-display').toggleClass('current-show');
 	  });
 	
+	  $('.fullscreen').on("click", () => {
+	    const el = document.documentElement;
+	    if(el.webkitRequestFullScreen) {
+	        el.webkitRequestFullScreen();
+	    }
+	    else {
+	        el.mozRequestFullScreen();
+	    }
+	  });
+	
 	  $('li').on("click", (e) => {
 	    resetSlider();
 	    thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
@@ -163,7 +182,11 @@
 	    $('#how-many').text('0');
 	  }
 	
-	  thisCanvas.replaceImage('pictures/marina.jpg', ctx);
+	
+	  // document.addEventListener('mozfullscreenchange', on_fullscreen_change);
+	  // document.addEventListener('webkitfullscreenchange', on_fullscreen_change);
+	
+	  // thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 	});
 
 
@@ -199,7 +222,6 @@
 	  }
 	
 	  bugger(ctx) {
-	    // debugger
 	    console.log(this.colorMap);
 	  }
 	
@@ -430,8 +452,8 @@
 	}
 	
 	Canvas.BG_COLOR = "#ffffff";
-	Canvas.DIM_X = 950;
-	Canvas.DIM_Y = 700;
+	Canvas.DIM_X = 1200;
+	Canvas.DIM_Y = 800;
 	Canvas.FPS = 32;
 	Canvas.NUM_ASTEROIDS = 10;
 	
