@@ -48,13 +48,51 @@ a {
   padding: 0;
 }
 
+.canvas-instructions {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 800px;
+  text-align: center;
+  font-size: 30px;
+  text-shadow: 3px 3px 5px black;
+}
+
+.canvas-instructions.hide-me {
+  display: none;
+}
+
 .below-canvas {
   margin-top: 10px;
   transition: 0.5s ease-in-out;
 }
 
+.controls-drawer {
+  position: fixed;
+  bottom: 0px;
+  right: 5%;
+  font-size: 18px;
+}
+
+.controls-drawer:hover .toggles{
+  max-height: 300px;
+}
+
 .toggles {
-  float: right;
+  max-height: 0;
+  transition: max-height 0.5s;
+}
+
+.drawer-top {
+  width: 300px;
+  text-align: center;
+  box-sizing: border-box;
+  background: black;
+  padding: 10px 20px;
+  border: 1px solid white;
+  margin: 2px 0;
+  text-transform: uppercase;
 }
 
 .toggle-btn {
@@ -62,9 +100,9 @@ a {
   text-align: center;
   box-sizing: border-box;
   background: black;
-  padding: 5px 10px;
+  padding: 10px 20px;
   border: 1px solid white;
-  margin: 5px 0;
+  margin: 2px 0;
   text-transform: uppercase;
 }
 

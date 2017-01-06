@@ -88,6 +88,7 @@
 	  $('canvas').on("mousedown", (e) => {
 	    $('.heading').addClass('fadeout');
 	    $('.below-canvas').addClass('fadeout');
+	    $('.canvas-instructions').addClass('hide-me');
 	
 	
 	    let mousePos = getMousePos(canvas, e);
@@ -176,15 +177,12 @@
 	    thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
 	  });
 	
+	
 	  function resetSlider() {
 	    thisCanvas.removeAllPoints();
 	    $('.main-column-slider')[0].value = 0;
 	    $('#how-many').text('0');
 	  }
-	
-	
-	  // document.addEventListener('mozfullscreenchange', on_fullscreen_change);
-	  // document.addEventListener('webkitfullscreenchange', on_fullscreen_change);
 	
 	  thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 	});
@@ -221,10 +219,6 @@
 	    this.showAccurate = !this.showAccurate;
 	  }
 	
-	  bugger(ctx) {
-	    console.log(this.colorMap);
-	  }
-	
 	  addPoint(point) {
 	    this.points.push(point);
 	  }
@@ -254,7 +248,6 @@
 	  }
 	
 	  calculateColorMap(ctx) {
-	    console.log('getting image data');
 	    let reds = [];
 	    let greens = [];
 	    let blues = [];

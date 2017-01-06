@@ -6,9 +6,9 @@
 
 A [Voronoi Diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) is a figure in which cells are created around a number of seed points such that all points within the cell are closest to its seed point.
 
-PicassoJS allows users to manually or randomly add cells to a Voronoi Diagram to create a picasso-esque version of their photographs.
+PicassoJS uses **D3.js**, **Canvas**, and **JavaScript** to allow users to manually or randomly add cells to a Voronoi Diagram to create a picasso-esque version of their photographs.
 
-![voronoi](./wireframe/demo.gif)
+![voronoi](./wireframe/demo2.gif)
 
 ## How it works
 
