@@ -147,11 +147,13 @@
 	  });
 	
 	  $('.toggle-points').on("click", () => {
+	    $('.toggle-points').toggleClass('selected');
 	    thisCanvas.togglePoints();
 	    thisCanvas.draw(ctx);
 	  });
 	
 	  $('.toggle-borders').on("click", () => {
+	    $('.toggle-borders').toggleClass('selected');
 	    thisCanvas.toggleBorders();
 	    thisCanvas.draw(ctx);
 	  });
@@ -175,6 +177,13 @@
 	  $('li').on("click", (e) => {
 	    resetSlider();
 	    thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
+	  });
+	
+	  $('.toggle-multi-opa').on("click", (e) => {
+	    $('.toggle-multi-opa').removeClass('selected');
+	    $(e.target).addClass('selected')
+	    thisCanvas.setOpacity(parseFloat(e.target.attributes.data.value));
+	    thisCanvas.draw(ctx);
 	  });
 	
 	
@@ -205,10 +214,15 @@
 	    this.showAccurate = false;
 	    this.showBorders = true;
 	    this.showPoints = true;
+	    this.opacity = 0.75;
 	  }
 	
 	  togglePoints() {
 	    this.showPoints = !this.showPoints;
+	  }
+	
+	  setOpacity(opa) {
+	    this.opacity = opa;
 	  }
 	
 	  toggleBorders() {
@@ -286,7 +300,7 @@
 	  printPolys(polys, ctx) {
 	    polys.forEach((polygon, idx) => {
 	      ctx.beginPath();
-	
+	      ctx.globalAlpha = this.opacity;
 	      let fillColor;
 	      if (this.showAccurate) {
 	        fillColor = this.averageColors(polygon, ctx);
@@ -302,6 +316,7 @@
 	        ctx.stroke();
 	      }
 	      ctx.fill();
+	      ctx.globalAlpha = 1;
 	    });
 	  }
 	

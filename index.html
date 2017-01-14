@@ -10,7 +10,10 @@
 
     <script src="bundle.js" charset="utf-8"></script>
     <link rel="stylesheet" href="css/reset.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/icons.css">
 
   </head>
   <body>
@@ -94,14 +97,21 @@
         <div class="controls-drawer">
           <div class="drawer-top">▲ view options ▲</div>
           <div class="toggles">
-            <div class="clear-button toggle-btn">Reset</div>
-            <div class="toggle-points toggle-btn">Toggle Points</div>
-            <div class="toggle-borders toggle-btn">Toggle Borders</div>
-            <div class="toggle-mode">
-              <div class="toggle-mode-display toggle-btn current-show">Render: Quick</div>
-              <div class="toggle-mode-display toggle-btn">Render: Accurate (SLOW)</div>
+            <div class="fullscreen toggle-btn"><i class="material-icons">fullscreen</i> Fullscreen</div>
+            <div class="clear-button toggle-btn"><i class="material-icons">restore</i> Reset</div>
+            <div class="toggle-points toggle-btn selected"><i class="material-icons">filter_center_focus</i> Points</div>
+            <div class="toggle-borders toggle-btn selected"><i class="material-icons">crop_free</i> Borders</div>
+            <div class="toggle-multi-select group">
+              <div class="toggle-multi-opa" data='.25'>25%</div>
+              <div class="toggle-multi-opa" data='.50'>50%</div>
+              <div class="toggle-multi-opa selected" data='.75'>75%</div>
+              <div class="toggle-multi-opa" data='1.00'>100%</div>
             </div>
-            <div class="fullscreen toggle-btn">Fullscreen!</div>
+            <div class="toggle-mode">
+              <div class="toggle-mode-display toggle-btn current-show"><i class="material-icons">timer</i> Render: Quick</div>
+              <div class="toggle-mode-display toggle-btn"><i class="material-icons">timer</i> Render: Accurate (SLOW)</div>
+            </div>
+
           </div>
         </div>
       </div>
