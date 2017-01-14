@@ -11,10 +11,15 @@ class Canvas {
     this.showAccurate = false;
     this.showBorders = true;
     this.showPoints = true;
+    this.opacity = 0.75;
   }
 
   togglePoints() {
     this.showPoints = !this.showPoints;
+  }
+
+  setOpacity(opa) {
+    this.opacity = opa;
   }
 
   toggleBorders() {
@@ -92,7 +97,7 @@ class Canvas {
   printPolys(polys, ctx) {
     polys.forEach((polygon, idx) => {
       ctx.beginPath();
-
+      ctx.globalAlpha = this.opacity;
       let fillColor;
       if (this.showAccurate) {
         fillColor = this.averageColors(polygon, ctx);
@@ -108,6 +113,7 @@ class Canvas {
         ctx.stroke();
       }
       ctx.fill();
+      ctx.globalAlpha = 1;
     });
   }
 

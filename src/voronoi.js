@@ -101,11 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   $('.toggle-points').on("click", () => {
+    $('.toggle-points').toggleClass('selected');
     thisCanvas.togglePoints();
     thisCanvas.draw(ctx);
   });
 
   $('.toggle-borders').on("click", () => {
+    $('.toggle-borders').toggleClass('selected');
     thisCanvas.toggleBorders();
     thisCanvas.draw(ctx);
   });
@@ -129,6 +131,13 @@ document.addEventListener("DOMContentLoaded", () => {
   $('li').on("click", (e) => {
     resetSlider();
     thisCanvas.replaceImage(e.target.attributes.data.nodeValue, ctx);
+  });
+
+  $('.toggle-multi-opa').on("click", (e) => {
+    $('.toggle-multi-opa').removeClass('selected');
+    $(e.target).addClass('selected')
+    thisCanvas.setOpacity(parseFloat(e.target.attributes.data.value));
+    thisCanvas.draw(ctx);
   });
 
 
