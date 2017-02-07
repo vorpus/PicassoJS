@@ -23,16 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const thisCanvas = new Canvas();
 
-
-  // canvas.addEventListener("click", (e) => {
-  //   let mousePos = getMousePos(canvas, e);
-  //   thisCanvas.addPoint([mousePos.x, mousePos.y]);
-  //   $('.main-column-slider')[0].value = parseInt($('.main-column-slider')[0].value) + 1;
-  //   thisCanvas.draw(ctx);
-  //
-  // });
-
-
   $('.heading, .below-canvas').mouseover(() => {
     $('.heading').removeClass('fadeout');
     $('.below-canvas').removeClass('fadeout');
@@ -91,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   $('.main-column-slider').on("input", (e) => {
     while (e.target.value > thisCanvas.checkPoints().length) {
-      thisCanvas.addPoint([Math.floor(Math.random()*Canvas.DIM_X), Math.floor(Math.random()*Canvas.DIM_Y)]);
+      thisCanvas.addPoint([Math.floor(Math.random()*Canvas.DIM_X),
+                          Math.floor(Math.random()*Canvas.DIM_Y)]);
     }
     while (e.target.value < thisCanvas.checkPoints().length) {
       thisCanvas.popPoint();
@@ -147,5 +138,5 @@ document.addEventListener("DOMContentLoaded", () => {
     $('#how-many').text('0');
   }
 
-  thisCanvas.replaceImage('pictures/marina.jpg', ctx);
+  // thisCanvas.replaceImage('pictures/marina.jpg', ctx);
 });

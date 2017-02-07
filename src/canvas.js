@@ -169,19 +169,18 @@ class Canvas {
   }
 
   submatrix(bounds) {
-    let relevantRedRows = this.colorMap.reds.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
-    let relevantReds = relevantRedRows.map((row) => {
-      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
-    });
-    let relevantGreenRows = this.colorMap.greens.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
-    let relevantGreens = relevantGreenRows.map((row) => {
-      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
-    });
-    let relevantBlueRows = this.colorMap.blues.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
-    let relevantBlues = relevantBlueRows.map((row) => {
-      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
-    });
+    let relevantRedRows = this.relevantRows(bounds, this.colorMap.reds)
+    let relevantGreenRows = this.relevantRows(bounds, this.colorMap.greens)
+    let relevantBlueRows = this.relevantRows(bounds, this.colorMap.blues)
     return [relevantReds,relevantGreens,relevantBlues];
+  }
+
+  relevantRows(bounds, colorMapSingles) {
+    let relevantColRows = colorMapSingles.slice(Math.floor(bounds.ymin), Math.floor(bounds.ymax));
+    let relevantColors = relevantColRows.map((row) => {
+      return row.slice(Math.floor(bounds.xmin), Math.floor(bounds.xmax));
+    });
+    return relevantColors;
   }
 
   squareBounds(polygon) {
@@ -259,7 +258,5 @@ class Canvas {
 Canvas.BG_COLOR = "#ffffff";
 Canvas.DIM_X = 1200;
 Canvas.DIM_Y = 800;
-Canvas.FPS = 32;
-Canvas.NUM_ASTEROIDS = 10;
 
 module.exports = Canvas;
